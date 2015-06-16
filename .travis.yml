@@ -8,3 +8,16 @@ script:
     - go get github.com/mattn/goveralls
     - go test -v -covermode=count -coverprofile=coverage.out
     - $HOME/gopath/bin/goveralls -coverprofile=coverage.out -service=travis-ci -repotoken $COVERALLS_TOKEN
+
+deploy:
+  provider: releases
+  api_key:
+    secure: "3x4qjoow9DtuLEUVzjpx4SBZiHUpOVhGZwW9jKVrtQm7TV1B2e+xbK00xdu7f0rFPtxQbO1TNyiyk3yVeyfplKVgc99O6H31Gy9PA5/aXyr/xgFNmBe9CqPbC1Bbfa5xrz6u6wr+IgnIGlyqPP7dSY1YtBXF5ccCrOva1DPcDOGatYtgG3iN3vC9jZyUkaBpCtq/voemV18x0YYLPVdZ3bmBwbxzguHa0uYF9lMQ0cfu2qTdppUsmv50O6T9zLkGofpdz4g4237FnoYYm8bURrljNWpBT5o2r4yFCcfLzvpus+riLinxlPL9lxbMGI+eMo/5pNKRvdMbAZNkfewsGLZewSrnz06bRb4raBhozt7F2pP6+O0MfrBac4csbCRdccxbrcHGWJpahDLQCqoKHFHlhY0HOamvA46M1+zD1xYKXvH7J6DK1Fxy5vfAvzgppSz29oloWNFpds75aavUVt8GN44WJUODieHawNJdsT7CYehPuQK8p2NOvJu4jYMg0hRv814WxQP4hw7ygeRzbyi9lIPRvwp83opY6RneNi6LxlzEggUP6VQ5oE7LUG2FXfG8V7bZrZ+5sRA3HBbX12Od63IJh5mHbusfmTGzfUfysbVXvnCK/UWEGTcXk/GMIWCtbD5GPSdN0EPbVlRZYWeV8HxkOk3HESbDuetgll0="
+  file: "$HOME/gopath/bin/go-pypi"
+  skip_cleanup: true
+  on:
+    tags: true
+
+notifications:
+  slack:
+    secure: vlv630XxuZy3Mq2uoJ6djShOKz2pF1o+J5TZXf1EaOhDjlCt/b0SFV+y5CN0+FZjESz5Z4b9c4GlUquTehMe1KIAQATx8kh+SLaugd+lJzdWuUw2K+ADxmRK+eqvsoc1b0fJjIaPpGLd2viLxsWAvZM/I0mwJ//XcpkPap+4AUwk2uhpIdpb+FzEy0h0wdGeB+3XkSYwSAMgHKmBKtixFsAMtgxRoz+tX0o3LCL5jEqIQb3ePyATkLpyNdV82H4zCVOsjdSeMtfKo1hrJD1BBD9aai07hBovAmdqfq5L4mlvxKOxX4yCpCe/KvAYe/SvnwHvc0TKIJiKQO+AyPUOzjFiaGweVBH4v+TUNk9zmiSc0Myb962Gk8xETJKWMHo6MOvMcDjn/queI172N0veSZhgBpzr+YvPDDgwvh4WD9dCHVqybn28z/JEXSBgjwZJSNHSg44Wmt7f/NhU20KdbMPT0bV4i4GAVw+eZQ5NCxgapHpUI3vhduNYuDpE2PwMlzcD8r90j+y+tMXoF2JE9iShcw+s+a64qTZIwr4gOKWgsAKebUy53VegTMPEZcoNZ70DsUOn9Gy4PLTDWmPZsjeGg0kxWFnTOU5+g5SBDx8D89X33Dh1NfqnpmUP1HufzJRZat4B50KoGjoVseH52sLW2Jq16OWh90fsOEYJRQ8=
