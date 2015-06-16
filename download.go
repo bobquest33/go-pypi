@@ -63,14 +63,14 @@ func PyPIGet(pkg ReleaseRequest, base_url string, extension string) {
 		if err != nil {
 			log.Fatal("could not parse %s url from %s", pkg.name, parsed_url)
 		}
+
 		download_url = download_url.ResolveReference(download_url)
 		url_split := strings.Split(download_url.Path, "/")
-		file_name := url_split[len(url_split)-1]
 
 		releases = append(releases, Release{
 			version:   s.Text(),
 			url:       download_url.String(),
-			file_name: file_name,
+			file_name: url_split[len(url_split)-1],
 		})
 	})
 
@@ -99,15 +99,15 @@ func PyPIGet(pkg ReleaseRequest, base_url string, extension string) {
 
 	sort.Sort(sort.Reverse(releases))
 
-	var latest_version string
+	var requested_version string
 	if pkg.version != "" {
-		latest_version = pkg.version
+		requested_version = pkg.version
 	} else {
-		latest_version = releases[0].version
+		requested_version = releases[0].version
 	}
 
 	for r := 0; r < len(releases); r++ {
-		if version.CompareSimple(latest_version, releases[r].version) == 0 {
+		if version.CompareSimple(requested_version, releases[r].version) == 0 {
 			if extension == "" || strings.HasSuffix(releases[r].file_name, extension) {
 				fmt.Printf(
 					"%s downloaded (%d bytes)\n",
