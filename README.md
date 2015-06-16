@@ -9,7 +9,7 @@ Using PyPI with Go
 ## install
 
 ```bash
-$ go install github.com/ccpgames/go-pypi
+$ go get github.com/ccpgames/go-pypi
 ```
 
 ## use
