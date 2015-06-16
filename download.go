@@ -16,14 +16,16 @@ import (
 )
 
 type ReleaseRequest struct {
-	base_url string
-	name     string
-	version  string
+	base_url 	string
+	extension 	string
+	name     	string
+	version  	string
 }
 
 type ReleaseRequests []ReleaseRequest
 
 type Release struct {
+	name      string
 	version   string
 	url       string
 	file_name string // file name to save as (from url)
@@ -43,9 +45,8 @@ func (slice Releases) Swap(i, j int) {
 	slice[i], slice[j] = slice[j], slice[i]
 }
 
-func PyPIGet(pkg ReleaseRequest, base_url string, extension string) {
-
-	doc, err := goquery.NewDocument(base_url + pkg.name)
+func get_releases(request ReleaseRequest) Releases {
+	doc, err := goquery.NewDocument(request.base_url + request.name)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -56,28 +57,32 @@ func PyPIGet(pkg ReleaseRequest, base_url string, extension string) {
 		parsed_url, _ := s.Attr("href")
 		if !strings.HasPrefix(parsed_url, "http") {
 			// relative path. make it full again
-			parsed_url = base_url + pkg.name + "/" + parsed_url
+			parsed_url = request.base_url + request.name + "/" + parsed_url
 		}
 
 		download_url, err := url.Parse(parsed_url)
 		if err != nil {
-			log.Fatal("could not parse %s url from %s", pkg.name, parsed_url)
+			log.Fatal("could not parse download url from %s", parsed_url)
 		}
 
 		download_url = download_url.ResolveReference(download_url)
 		url_split := strings.Split(download_url.Path, "/")
 
 		releases = append(releases, Release{
+			name:	   request.name,
 			version:   s.Text(),
 			url:       download_url.String(),
 			file_name: url_split[len(url_split)-1],
 		})
 	})
+	return releases
+}
 
-	for r := 0; r < len(releases); r++ {
+func normalize_versions(releases Releases) Releases {
+	for i := 0; i < len(releases); i++ {
 		this_version := ""
-		for c := len(pkg.name) + 1; c < len(releases[r].version); c++ {
-			char := string(releases[r].version[c])
+		for c := len(releases[i].name) + 1; c < len(releases[i].version); c++ {
+			char := string(releases[i].version[c])
 			if char == "." {
 				this_version += char
 			} else if _, err := strconv.Atoi(char); err == nil {
@@ -86,37 +91,9 @@ func PyPIGet(pkg ReleaseRequest, base_url string, extension string) {
 				break
 			}
 		}
-		if last := len(this_version) - 1; last >= 0 && string(this_version[last]) == "." {
-			this_version = this_version[:last]
-		}
-		releases[r].version = version.Normalize(this_version)
+		releases[i].version = version.Normalize(strings.TrimSuffix(this_version, "."))
 	}
-
-	if len(releases) == 0 {
-		fmt.Printf("No releases found for %s\n", pkg.name)
-		return
-	}
-
-	sort.Sort(sort.Reverse(releases))
-
-	var requested_version string
-	if pkg.version != "" {
-		requested_version = pkg.version
-	} else {
-		requested_version = releases[0].version
-	}
-
-	for r := 0; r < len(releases); r++ {
-		if version.CompareSimple(requested_version, releases[r].version) == 0 {
-			if extension == "" || strings.HasSuffix(releases[r].file_name, extension) {
-				fmt.Printf(
-					"%s downloaded (%d bytes)\n",
-					releases[r].file_name,
-					download_release(releases[r]),
-				)
-			}
-		}
-	}
+	return releases
 }
 
 func download_release(release Release) int64 {
@@ -143,8 +120,7 @@ func download_release(release Release) int64 {
 	return n
 }
 
-func main() {
-
+func get_user_requests() ReleaseRequests {
 	var urlPtr = flag.String(
 		"url",
 		"https://pypi.python.org/simple/",
@@ -171,16 +147,71 @@ func main() {
 	requests := ReleaseRequests{}
 	var args = flag.Args()
 	for i := 0; i < len(args); i++ {
-		if strings.Index(args[i], "=") > -1 && strings.Count(args[i], "=") == 1 {
+		if strings.Count(args[i], "=") == 1 {
 			reqPkg := strings.Split(args[i], "=")[0]
 			reqVer := strings.Split(args[i], "=")[1]
-			requests = append(requests, ReleaseRequest{name: reqPkg, version: reqVer})
+			requests = append(requests, ReleaseRequest{
+				name: reqPkg,
+				version: reqVer,
+				base_url: base_url,
+				extension: extension,
+			})
 		} else {
-			requests = append(requests, ReleaseRequest{name: args[i]})
+			requests = append(requests, ReleaseRequest{
+				name: args[i],
+				base_url: base_url,
+				extension: extension,
+			})
 		}
 	}
+	return requests
+}
 
-	for r := 0; r < len(requests); r++ {
-		PyPIGet(requests[r], base_url, extension)
+func PyPIGet(request ReleaseRequest) {
+	releases := normalize_versions(get_releases(request))
+
+	if len(releases) == 0 {
+		fmt.Printf("No releases found for %s\n", request.name)
+		return
+	}
+
+	sort.Sort(sort.Reverse(releases))
+
+	var requested_version string
+	if request.version == "" {
+		requested_version = releases[0].version
+	} else {
+		requested_version = request.version
+	}
+
+	downloads := 0
+	for i := 0; i < len(releases); i++ {
+		if version.CompareSimple(requested_version, releases[i].version) == 0 {
+			if request.extension == "" || strings.HasSuffix(releases[i].file_name, request.extension) {
+				fmt.Printf(
+					"%s downloaded (%d bytes)\n",
+					releases[i].file_name,
+					download_release(releases[i]),
+				)
+				downloads += 1
+			}
+		}
+	}
+	if downloads == 0 {
+		err_txt := "No releases found for " + request.name
+		if request.version != "" {
+			err_txt += "=" + request.version
+		}
+		if request.extension != "" {
+			err_txt += " (" + request.extension + ")"
+		}
+		fmt.Println(err_txt)
+	}
+}
+
+func main() {
+	requests := get_user_requests()
+	for i := 0; i < len(requests); i++ {
+		PyPIGet(requests[i])
 	}
 }
