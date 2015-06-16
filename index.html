@@ -1,0 +1,79 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Go-pypi by ccpgames</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/github-light.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1>Go-pypi</h1>
+        <p>Using PyPI with Go</p>
+
+        <p class="view"><a href="https://github.com/ccpgames/go-pypi">View the Project on GitHub <small>ccpgames/go-pypi</small></a></p>
+
+
+        <ul>
+          <li><a href="https://github.com/ccpgames/go-pypi/zipball/master">Download <strong>ZIP File</strong></a></li>
+          <li><a href="https://github.com/ccpgames/go-pypi/tarball/master">Download <strong>TAR Ball</strong></a></li>
+          <li><a href="https://github.com/ccpgames/go-pypi">View On <strong>GitHub</strong></a></li>
+        </ul>
+      </header>
+      <section>
+        <h1>
+<a id="go-pypi" class="anchor" href="#go-pypi" aria-hidden="true"><span class="octicon octicon-link"></span></a>go-pypi</h1>
+
+<p><a href="https://travis-ci.org/ccpgames/go-pypi"><img src="https://img.shields.io/travis/ccpgames/go-pypi.svg" alt="Build status"></a>
+<a href="https://coveralls.io/r/ccpgames/go-pypi?branch=master"><img src="https://img.shields.io/coveralls/ccpgames/go-pypi.svg" alt="Coverage Status"></a>
+<a href="https://github.com/ccpgames/go-pypi/blob/master/LICENSE"><img src="https://img.shields.io/github/license/ccpgames/go-pypi.svg" alt="License"></a></p>
+
+<p>Using PyPI with Go</p>
+
+<h2>
+<a id="install" class="anchor" href="#install" aria-hidden="true"><span class="octicon octicon-link"></span></a>install</h2>
+
+<div class="highlight highlight-bash"><pre>$ go install github.com/ccpgames/go-pypi</pre></div>
+
+<h2>
+<a id="use" class="anchor" href="#use" aria-hidden="true"><span class="octicon octicon-link"></span></a>use</h2>
+
+<p>Get the latest version of packages by default:</p>
+
+<div class="highlight highlight-bash"><pre>$ go-pypi requests
+requests-2.7.0-py2.py3-none-any.whl downloaded (470641 bytes)
+requests-2.7.0.tar.gz downloaded (451723 bytes)</pre></div>
+
+<p>Get a specific version (and/or multiple packages at once):</p>
+
+<div class="highlight highlight-bash"><pre>$ go-pypi requests=1.0.0 Flask
+requests-1.0.0.tar.gz downloaded (335548 bytes)
+Flask-0.10.1.tar.gz downloaded (544247 bytes)</pre></div>
+
+<p>Get a specific format:</p>
+
+<div class="highlight highlight-bash"><pre>$ go-pypi --extension=whl requests
+requests-2.7.0-py2.py3-none-any.whl downloaded (470641 bytes)</pre></div>
+
+<p>Get from a different PyPI server:</p>
+
+<div class="highlight highlight-bash"><pre>$ go-pypi --url=https://pypi.yourcompany.com/pypi requests
+requests-2.7.0-py2.py3-none-any.whl downloaded (470641 bytes)
+requests-2.7.0.tar.gz downloaded (451723 bytes)</pre></div>
+      </section>
+      <footer>
+        <p>This project is maintained by <a href="https://github.com/ccpgames">ccpgames</a></p>
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+      </footer>
+    </div>
+    <script src="javascripts/scale.fix.js"></script>
+    
+  </body>
+</html>
