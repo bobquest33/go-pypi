@@ -1,8 +1,8 @@
 # go-pypi
 
-![Build status](https://img.shields.io/travis/ccpgames/go-pypi.svg)
-![Coverage Status](https://img.shields.io/coveralls/ccpgames/go-pypi.svg)
-![License](https://img.shields.io/github/license/ccpgames/go-pypi.svg)
+[![Build status](https://img.shields.io/travis/ccpgames/go-pypi.svg)](https://travis-ci.org/ccpgames/go-pypi)
+[![Coverage Status](https://img.shields.io/coveralls/ccpgames/go-pypi.svg)](https://coveralls.io/r/ccpgames/go-pypi?branch=master)
+[![License](https://img.shields.io/github/license/ccpgames/go-pypi.svg)](https://github.com/ccpgames/go-pypi/blob/master/LICENSE)
 
 Using PyPI with Go
 
